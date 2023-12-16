@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Check if version number is provided
+if [ -z "$1" ]; then
+  echo "Usage: ./release.sh <version_number>"
+  exit 1
+fi
+
+
+# Function to check if a command exists
+is_command_available() {
+  command -v $1 >/dev/null 2>&1
+}
+
+# Check for lolcat and GitHub CLI (gh)
+is_command_available lolcat
+is_lolcat_available=$?
+
+version_number=$1
+
+# Path to the temporary commit message editing script
+commit_editor_script="/tmp/edit_commit_message_$$.sh"
+
+# Create the temporary commit message editing script
+cat > "$commit_editor_script" <<EOF
+#!/bin/bash
+commit_message_file="\$1"
+sed -i '/^[vV]?\d+\.\d+(\.\d+)*\$/d' "\$commit_message_file"
+EOF
+
+if [ $is_lolcat_available -eq 0 ]; then
+    echo "Finishing release $version_number" | lolcat
+else
+    echo "Finishing release $version_number"
+fi
+
+
+# Make the temporary script executable
+chmod +x "$commit_editor_script"
+
+# Set Git to use the custom commit message editing script
+export GIT_EDITOR="$commit_editor_script"
+
+if [ $is_lolcat_available -eq 0 ]; then
+    # Finish the release with Git Flow
+    git flow release finish -m  "Release $version_number" "$version_number" | lolcat
+else
+    # Finish the release with Git Flow
+    git flow release finish -m  "Release $version_number" "$version_number"
+fi
+
+if [ $is_lolcat_available -eq 0 ]; then
+    echo "Finished release $version_number 🎉" | lolcat
+else
+    echo "Finished release $version_number 🎉"
+fi
+
+# Cleanup: Remove the temporary script
+rm -f "$commit_editor_script"

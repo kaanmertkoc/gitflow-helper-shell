@@ -20,39 +20,39 @@ is_command_available gh
 is_gh_available=$?
 
 if [ $is_lolcat_available -eq 0 ]; then
-  # Use the provided version to create a hotfix branch
-  echo "Creating hotfix $version" | lolcat
-  git flow hotfix start $version | lolcat
-  echo "Hotfix branch created" | lolcat
+  # Use the provided version to create a release branch
+  echo "Creating release $version" | lolcat
+  git flow release start $version | lolcat
+  echo "Release branch created" | lolcat
   
   # Rest of your commands with lolcat
-  echo "Hotfix works" | lolcat
+  echo "Release works" | lolcat
   npm version patch | lolcat
   echo "made version patch" | lolcat
   git add . | lolcat && git commit -m "docs: version bump" | lolcat
   echo "committed" | lolcat
-  git flow hotfix publish | lolcat
+  git flow release publish | lolcat
   echo "published the branch 🎉" | lolcat
   if [ $is_gh_available -eq 0 ]; then
-    gh pr create --title "Hotfix $version" --body "Hotfix $version" --base main
+    gh pr create --title "Release $version" --body "Release $version" --base main
     echo "created the PR 🎉" | lolcat
   fi
 else
-  # Use the provided version to create a hotfix branch
-  echo "Creating hotfix $version"
-  git flow hotfix start $version
-  echo "Hotfix branch created"
+  # Use the provided version to create a release branch
+  echo "Creating release $version"
+  git flow release start $version
+  echo "Release branch created"
 
   # Rest of your commands
-  echo "Hotfix works"
+  echo "Release works"
   npm version patch
   echo "made version patch"
   git add . && git commit -m "docs: version bump"
   echo "committed"
-  git flow hotfix publish
+  git flow release publish
   echo "published the branch 🎉"
   if [ $is_gh_available -eq 0 ]; then
-    gh pr create --title "Hotfix $version" --body "Hotfix $version" --base main
+    gh pr create --title "Release $version" --body "Release $version" --base main
     echo "created the PR 🎉"
   fi
 fi

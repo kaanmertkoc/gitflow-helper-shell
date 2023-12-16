@@ -55,5 +55,17 @@ else
     echo "Finished release $version_number 🎉"
 fi
 
+if [ $is_lolcat_available -eq 0 ]; then
+    git push origin dev --tags | lolcat
+    git checkout main | lolcat 
+    git push origin main --tags | lolcat
+    echo "Pushing to origin" | lolcat
+else
+    git push origin dev --tags
+    git checkout main
+    git push origin main --tags
+    echo "Pushing to origin"
+fi
+
 # Cleanup: Remove the temporary script
 rm -f "$commit_editor_script"
